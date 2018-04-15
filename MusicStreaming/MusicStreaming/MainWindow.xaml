@@ -1,0 +1,126 @@
+﻿<Window x:Class="UserInterface.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicStreaming"
+        mc:Ignorable="d"
+        Title="Music Streaming" Height="350" Width="525" Closed="Window_Closed">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Background="DarkGray">
+            <Button Name="m_searchButton" DockPanel.Dock="Top" BorderThickness="0" Padding="20,5" Click="OnClickSearchOption" Content="Search"/>
+            <Button Name="m_playlistsButton" DockPanel.Dock="Top" BorderThickness="0" Padding="20,5" Click="OnClickPlaylistsOption" VerticalAlignment="Top">PlayLists</Button>
+
+            <Button DockPanel.Dock="Bottom" VerticalAlignment="Bottom" BorderThickness="0" Padding="20,5" Click="OnClickConnectSpotify" Background="GreenYellow">Connect Spotify</Button>
+        </DockPanel>
+        <ScrollViewer Grid.Column="1" Grid.Row="0"  VerticalScrollBarVisibility="Auto">
+        <StackPanel Background="LightBlue" CanVerticallyScroll="True" CanHorizontallyScroll="True">
+            <DockPanel Name="m_createPlaylistPanel" Margin="10,10,10,2" VerticalAlignment="Stretch">
+                <Button Padding="20, 5" DockPanel.Dock="Right" Click="OnClickCreatePlaylist">Create
+                </Button>
+                <TextBox Name="m_playListTextBox" Margin="0,0,5,0" DockPanel.Dock="left"/>
+            </DockPanel>
+            <StackPanel Orientation="Horizontal">
+                <ItemsControl Margin="10,10,10,2" Name="m_playlistControl" ItemsSource="{Binding Playlists}" Background="Beige">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Click="OnPlayPlaylist" Height="20" Width="20">
+                                    <Image Source="./Icons/play.png" ToolTip="Play playlist"/>
+                                </Button>
+                                <TextBlock Margin="5,0,0,0"  Text="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                    <ListView Name="m_playlistDataGrid" Margin="10, 0" ItemsSource="{Binding CurrentPlaylist}" Height="25" VerticalAlignment="Center" ClipToBounds="True">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn  Header="Name">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button Click="OnPlayFoundTrack" >
+                                                    <Image Source="./Icons/play.png"/>
+                                                </Button>
+                                                <TextBlock Padding="5,0,5,0" Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn  DisplayMemberBinding="{Binding Album}" Header="Album"/>
+                                <GridViewColumn  DisplayMemberBinding="{Binding Artist}" Header="Artist"/>
+                                <GridViewColumn  DisplayMemberBinding="{Binding DurationMin}" Header="Duration (Min)"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            <DockPanel Name="m_searchPanel" Margin="10,10,10,2" VerticalAlignment="Stretch">
+                <Button Padding="20, 5" DockPanel.Dock="Right" Click="OnClickSearch">Search
+                </Button>
+                <TextBox Name="m_searchTextBox" Margin="0,0,5,0" DockPanel.Dock="left"/>
+            </DockPanel>
+            <StackPanel Name="m_systemsPanel" Orientation="Horizontal" Margin="10,0,10,10">
+                <CheckBox Name="m_spotifySearchCheck"  Content="Spotify" Margin="0,0,10,0"/>
+                <CheckBox Name="m_deezerSearchCheck"  Content="Deezer"  Margin="0,0,10,0"/>
+                <CheckBox Name="m_jamendoSearchCheck"  Content="Jamendo"/>
+            </StackPanel>
+            <DataGrid Name="m_foundDataGrid" Margin="10, 0" ItemsSource="{Binding FoundTracks}" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="25" VerticalAlignment="Center">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Click="OnPlayFoundTrack" >
+                                        <Image Source="./Icons/play.png"/>
+                                    </Button>
+                                    <TextBlock Padding="5,0,5,0" Text="{Binding Name}" Width="200"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                        <DataGridTextColumn Binding="{Binding Album}" Header="Album" MaxWidth="200"/>
+                        <DataGridTextColumn Binding="{Binding Artist}" Header="Artist" MaxWidth="60"/>
+                    <DataGridTextColumn Binding="{Binding DurationMin}" Header="Duration"/>
+                    <DataGridTextColumn Binding="{Binding Type}" Header="System"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+        </ScrollViewer>
+        <DockPanel Grid.Column="1" Grid.Row="1" Height="120"  Background="Beige" >
+            <Image Name="m_trackImage" DockPanel.Dock="Right" Width="120" HorizontalAlignment="Right"/>
+            <StackPanel Background="Coral" >
+                <DockPanel Margin="10,5,10,0">
+                    <StackPanel DockPanel.Dock="Left" HorizontalAlignment="Left">
+                        <TextBlock Name="m_titleTrackTextBox"/>
+                        <TextBlock Name="m_albumTrackTextBox"/>
+                        <TextBlock Name="m_artistTrackTextBox"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <ComboBox Name="m_playlistsComboBox" Margin="0,0,5,0" Width="100" ItemsSource="{Binding Playlists}"/>
+                        <Button Name="m_addToPlaylistButton" Padding="5,2" Content="Add to playlist" Click="OnClickAddToPlaylist"/>
+                    </StackPanel>
+                </DockPanel>
+                <StackPanel DockPanel.Dock="Right">
+                    
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                    <Slider Name="m_trackSlider" Margin="10,0" Height="40" TickPlacement="BottomRight" TickFrequency="10"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Margin="0,0,5,0" Content="Previous" Click="OnClickPrevious"/>
+                        <Button Margin="0,0,5,0" Content="Play/Pause" Click="OnClickPlayPause"/>
+                        <Button Margin="0,0,5,0" Content="Next" Click="OnClickNext"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>
