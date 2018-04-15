@@ -31,6 +31,9 @@ namespace UserInterface
         public static readonly DependencyProperty CurrentPlaylistProperty = DependencyProperty.Register(
             "CurrentPlaylist", typeof(ObservableCollection<LocalTrack>), typeof(MainWindow));
 
+        public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
+            nameof(IsPlaying), typeof(bool?), typeof(MainWindow));
+
         /*public static readonly DependencyProperty CurrentPlaylistProperty = DependencyProperty.Register(
         "CurrentPlaylist", typeof(LocalPlaylist), typeof(MainWindow));*/
 
@@ -58,6 +61,14 @@ namespace UserInterface
             set { SetValue(CurrentPlaylistProperty, value); }
         }
 
+        public bool? IsPlaying
+        {
+            get { return (bool?)GetValue(IsPlayingProperty); }
+            set { SetValue(IsPlayingProperty, value); }
+        }
+
+        public string Next => "Next";
+
         /*public LocalPlaylist CurrentPlaylistTracks
         {
             get { return (LocalPlaylist)GetValue(CurrentPlaylistProperty); }
@@ -78,6 +89,7 @@ namespace UserInterface
             m_trackSlider.DataContext = CurrentTrack;
             m_playlistControl.DataContext = this;
             m_playlistDataGrid.DataContext = this;
+            m_readingPanel.DataContext = this;
             EnableSearch();
             PlayingPlaylist = false;
             CurrentPlaylistTrackIndex = 0;
@@ -197,12 +209,14 @@ namespace UserInterface
         {
             LocalTrack track = FoundTracks[m_foundDataGrid.SelectedIndex];
             m_streamingSystemManager.Play(track);
+            IsPlaying = true;
             CurrentTrack = track;
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {         
             m_streamingSystemManager?.Pause();
+            IsPlaying = false;
             if (m_streamingSystemManager != null)
             {
                 m_streamingSystemManager.OnTrackTimeChange -= OnCurrentTrackTimeChange;
@@ -250,13 +264,15 @@ namespace UserInterface
             {
                 PlayingPlaylist = true;
                 CurrentTrack = CurrentPlaylist[index];
-                m_streamingSystemManager.Play(CurrentTrack).Wait();
+                m_streamingSystemManager.Play(CurrentTrack);
+                IsPlaying = true;
                 CurrentPlaylistTrackIndex++;
             }
             else
             {
                 PlayingPlaylist = false;
-                m_streamingSystemManager.Pause().Wait();
+                m_streamingSystemManager.Pause();
+                IsPlaying = false;
             }
         }
 
@@ -282,7 +298,16 @@ namespace UserInterface
 
         private void OnClickPlayPause(object sender, RoutedEventArgs e)
         {
-
+            if (IsPlaying == true)
+            {
+                m_streamingSystemManager.Pause();
+                IsPlaying = false;
+            }
+            else if (IsPlaying == false)
+            {
+                m_streamingSystemManager.Play(CurrentTrack);
+                IsPlaying = true;
+            }
         }
 
         private void OnClickNext(object sender, RoutedEventArgs e)
@@ -290,4 +315,6 @@ namespace UserInterface
 
         }
     }
+
+    
 }

@@ -29,7 +29,7 @@ namespace MusicStreaming
 
         readonly private StreamingPlayer[] m_players = {
             SpotifyPlayer.GetInstance(),
-            DeezerPlayer.GetInstance(),
+            Players.DeezerPlayer.GetInstance(),
             JamendoPlayer.GetInstance()
         };
 
@@ -110,7 +110,8 @@ namespace MusicStreaming
                 foreach (StreamingSystemType type in types)
                 {
                     var response = m_clients[(int)type].Execute<List<LocalTrack>>(request);
-                    tracks.AddRange(response?.Data);
+                    if(response?.Data != null)
+                        tracks.AddRange(response?.Data);
                 }
                 return tracks;
             });

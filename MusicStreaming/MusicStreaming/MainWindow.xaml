@@ -4,8 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicStreaming"
+        xmlns:converters="clr-namespace:MusicStreaming.Converters"
         mc:Ignorable="d"
         Title="Music Streaming" Height="350" Width="525" Closed="Window_Closed">
+    <Window.Resources>
+        <converters:NullableBoolToPlayPauseText x:Key="NullableBoolToPlayPauseText" />
+        <converters:NullableBoolToIsEnabled x:Key="NullableBoolToIsEnabled" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -114,10 +119,12 @@
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
                     <Slider Name="m_trackSlider" Margin="10,0" Height="40" TickPlacement="BottomRight" TickFrequency="10"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Margin="0,0,5,0" Content="Previous" Click="OnClickPrevious"/>
-                        <Button Margin="0,0,5,0" Content="Play/Pause" Click="OnClickPlayPause"/>
-                        <Button Margin="0,0,5,0" Content="Next" Click="OnClickNext"/>
+                    <StackPanel Margin="5" Name="m_readingPanel" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Margin="0,0,5,0" Width="50" Content="Previous" Click="OnClickPrevious" VerticalAlignment="Center"/>
+                        <Button Margin="0,0,5,0" Width="50" VerticalAlignment="Center"
+                                Content="{Binding IsPlaying, Converter={StaticResource NullableBoolToPlayPauseText}}" 
+                                IsEnabled="{Binding IsPlaying, Converter={StaticResource NullableBoolToIsEnabled}}" Click="OnClickPlayPause"/>
+                        <Button Width="50" Margin="0,0,5,0" Content="{Binding Next}" VerticalAlignment="Center" Click="OnClickNext"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

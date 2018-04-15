@@ -19,7 +19,8 @@ namespace MusicStreaming.Players
         private static SpotifyPlayer s_instance;
 
         private SpotifyPlayer()
-        {            
+        {
+            Connect();         
         }
 
         public static SpotifyPlayer GetInstance()
